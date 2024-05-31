@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Yapılacaklar Listesi{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="mt-5">Yapılacaklar Listesi</h1>
+        <form action="/add" method="POST" class="form-inline my-3">
+            <input type="text" name="todo" placeholder="Yapılacak iş..." class="form-control mr-2">
+            <button type="submit" class="btn btn-primary mb-2">Ekle</button>
+        </form>
+
+        <ul class="list-group">
+            {% for todo in todos %}
+                <li class="list-group-item">
+                    <span>{{ todo.text }}</span>
+                    <div class="button-group mt-2">
+                        {% if not todo.completed %}
+                            <a href="/complete/{{ todo._id }}" class="btn btn-success btn-sm mb-2">Tamamla</a>
+                        {% endif %}
+                        <a href="/delete/{{ todo._id }}" class="btn btn-danger btn-sm mb-2">Sil</a>
+                        <button class="btn btn-secondary btn-sm mb-2" onclick="toggleEditForm('{{ todo._id }}')">Düzenle</button>
+                        <a href="/view_photo/{{ todo._id }}" class="btn btn-primary btn-sm mb-2">Fotoğrafı Görüntüle</a>
+                    </div>
+
+                    <form action="/edit/{{ todo._id }}" method="POST" class="form-inline mt-2" style="display: none;" id="edit-form-{{ todo._id }}">
+                        <input type="text" name="new_text" value="{{ todo.text }}" class="form-control mr-2">
+                        <button type="submit" class="btn btn-primary btn-sm">Güncelle</button>
+                    </form>
+
+                    <form action="/add_photo/{{ todo._id }}" method="POST" enctype="multipart/form-data" class="mt-2">
+                        <input type="file" name="photo">
+                        <button type="submit" class="btn btn-info btn-sm mb-2">Fotoğraf Yükle</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script>
+        function toggleEditForm(todoId) {
+            var form = document.getElementById('edit-form-' + todoId);
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        }
+    </script>
+{% endblock %}
